@@ -1,6 +1,8 @@
 import { render, screen } from '@/test/test-utils';
 import { AdvocateList } from './AdvocateList';
-import { describe, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { useGetAdvocates } from '@/api/getAdvocates';
+import userEvent from '@testing-library/user-event';
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
@@ -14,7 +16,7 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 
-// Mock the API hook
+// Mock needs to be before any test code
 vi.mock('@/api/getAdvocates', () => ({
   useGetAdvocates: vi.fn(() => ({
     data: [
@@ -59,5 +61,21 @@ describe('AdvocateList', () => {
     render(<AdvocateList />);
 
     expect(screen.getByPlaceholderText('Search')).toBeInTheDocument();
+  });
+
+  it('calls useGetAdvocates with empty string initially', () => {
+    render(<AdvocateList />);
+    // Get the mock function directly from the imported module
+    expect(useGetAdvocates).toHaveBeenCalledWith('');
+  });
+
+  it('calls useGetAdvocates with search term when user types', async () => {
+    const user = userEvent.setup();
+    render(<AdvocateList />);
+    const searchInput = screen.getByPlaceholderText('Search');
+
+    await user.type(searchInput, 'test');
+
+    expect(useGetAdvocates).toHaveBeenCalledWith('test');
   });
 });
