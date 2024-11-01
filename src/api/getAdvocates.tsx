@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
-export const getAdvocates = async () => {
-  const response = await fetch('/api/advocates');
+export const getAdvocates = async (search?: string) => {
+  const response = await fetch(`/api/advocates?search=${search}`);
   const data = await response.json();
   return data.data;
 };
 
-export const useGetAdvocates = () =>
+export const useGetAdvocates = (search?: string) =>
   useQuery({
-    queryKey: ['advocates'],
-    queryFn: getAdvocates,
+    queryKey: ['advocates', search],
+    queryFn: () => getAdvocates(search),
   });

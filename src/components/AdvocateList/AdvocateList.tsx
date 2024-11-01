@@ -1,8 +1,10 @@
 'use client';
 
 import { useGetAdvocates } from '@/api/getAdvocates';
+import { SPECIALTY_TO_COLOR } from '@/constants';
 import { Advocate } from '@/types';
-import { Table, TableProps, Tag } from 'antd';
+import { Input, Table, TableProps, Tag } from 'antd';
+import { useState } from 'react';
 
 interface DataType {
   key: string;
@@ -16,9 +18,14 @@ interface DataType {
 }
 
 export const AdvocateList = () => {
-  const advocatesQuery = useGetAdvocates();
+  const [search, setSearch] = useState('');
+  const advocatesQuery = useGetAdvocates(search);
 
-  console.log(advocatesQuery.data);
+  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
+    setSearch(e.target.value);
+  };
+
   const columns: TableProps<Advocate>['columns'] = [
     {
       title: 'First Name',
@@ -47,10 +54,9 @@ export const AdvocateList = () => {
       render: (_, { specialties }) => (
         <>
           {specialties.map((specialty) => {
-            let color = specialty.length > 5 ? 'geekblue' : 'green';
-            if (specialty === 'loser') {
-              color = 'volcano';
-            }
+            const color = SPECIALTY_TO_COLOR.find(
+              ({ specialty: s }) => s === specialty
+            )?.color;
             return (
               <Tag color={color} key={specialty}>
                 {specialty.toUpperCase()}
@@ -72,5 +78,10 @@ export const AdvocateList = () => {
     },
   ];
 
-  return <Table dataSource={advocatesQuery.data} columns={columns} />;
+  return (
+    <>
+      <Input.Search placeholder="Search" onChange={onSearch} />
+      <Table dataSource={advocatesQuery.data} columns={columns} />
+    </>
+  );
 };
