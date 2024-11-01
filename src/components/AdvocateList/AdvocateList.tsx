@@ -6,17 +6,6 @@ import { Advocate } from '@/types';
 import { Input, Table, TableProps, Tag } from 'antd';
 import { useState } from 'react';
 
-interface DataType {
-  key: string;
-  firstName: string;
-  lastName: string;
-  city: string;
-  degree: string;
-  specialties: string[];
-  yearsOfExperience: number;
-  phoneNumber: string;
-}
-
 export const AdvocateList = () => {
   const [search, setSearch] = useState('');
   const advocatesQuery = useGetAdvocates(search);
