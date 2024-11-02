@@ -3,12 +3,53 @@
 import { useGetAdvocates } from '@/api/getAdvocates';
 import { SPECIALTY_TO_COLOR } from '@/constants';
 import { Advocate } from '@/types';
-import { Input, Table, TableProps, Tag } from 'antd';
-import { useState } from 'react';
+import { GetProp, Input, Table, TableProps, Tag } from 'antd';
+import { useEffect, useState } from 'react';
+
+type TablePaginationConfig = Exclude<
+  GetProp<TableProps, 'pagination'>,
+  boolean
+>;
+
+interface TableParams {
+  pagination?: TablePaginationConfig;
+}
 
 export const AdvocateList = () => {
   const [search, setSearch] = useState('');
-  const advocatesQuery = useGetAdvocates(search);
+  const [tableParams, setTableParams] = useState<TableParams>({
+    pagination: {
+      current: 1,
+      pageSize: 10,
+    },
+  });
+
+  const advocatesQuery = useGetAdvocates({
+    search,
+    page: tableParams.pagination?.current,
+    pageSize: tableParams.pagination?.pageSize,
+  });
+
+  useEffect(() => {
+    if (advocatesQuery.data) {
+      setTableParams({
+        pagination: {
+          ...tableParams.pagination,
+          total: advocatesQuery.data.total,
+        },
+      });
+    }
+  }, [advocatesQuery.data]);
+
+  const handleTableChange = (props: TablePaginationConfig) => {
+    console.log(props);
+    setTableParams({
+      pagination: {
+        ...tableParams.pagination,
+        ...props,
+      },
+    });
+  };
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value);
@@ -70,7 +111,12 @@ export const AdvocateList = () => {
   return (
     <>
       <Input.Search placeholder="Search" onChange={onSearch} />
-      <Table dataSource={advocatesQuery.data} columns={columns} />
+      <Table
+        dataSource={advocatesQuery.data?.data}
+        columns={columns}
+        pagination={tableParams.pagination}
+        onChange={handleTableChange}
+      />
     </>
   );
 };

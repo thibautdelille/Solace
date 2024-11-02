@@ -48,3 +48,5 @@ export const SPECIALTY_TO_COLOR = specialties.map((specialty, index) => ({
   specialty,
   color: colors[index % colors.length],
 }));
+
+export const DEFAULT_PAGE_SIZE = 10;
