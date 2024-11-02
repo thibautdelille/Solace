@@ -42,7 +42,6 @@ export const AdvocateList = () => {
   }, [advocatesQuery.data]);
 
   const handleTableChange = (props: TablePaginationConfig) => {
-    console.log(props);
     setTableParams({
       pagination: {
         ...tableParams.pagination,
@@ -52,7 +51,6 @@ export const AdvocateList = () => {
   };
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
     setSearch(e.target.value);
   };
 

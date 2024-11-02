@@ -19,18 +19,25 @@ vi.mock('next/navigation', () => ({
 // Mock needs to be before any test code
 vi.mock('@/api/getAdvocates', () => ({
   useGetAdvocates: vi.fn(() => ({
-    data: [
-      {
-        id: '1',
-        firstName: 'John',
-        lastName: 'Doe',
-        city: 'New York',
-        degree: 'Ph.D.',
-        specialties: ['Anxiety', 'Depression'],
-        yearsOfExperience: 10,
-        phoneNumber: '123-456-7890',
-      },
-    ],
+    data: {
+      data: [
+        {
+          id: '1',
+          firstName: 'John',
+          lastName: 'Doe',
+          city: 'New York',
+          degree: 'Ph.D.',
+          specialties: ['Anxiety', 'Depression'],
+          yearsOfExperience: 10,
+          phoneNumber: '123-456-7890',
+        },
+      ],
+      total: 1,
+      page: 1,
+      pageSize: 10,
+    },
+    isLoading: false,
+    isError: false,
   })),
 }));
 
@@ -76,6 +83,8 @@ describe('AdvocateList', () => {
 
     await user.type(searchInput, 'test');
 
-    expect(useGetAdvocates).toHaveBeenCalledWith('test');
+    expect(useGetAdvocates).toHaveBeenCalledWith({
+      search: 'test',
+    });
   });
 });
